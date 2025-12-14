@@ -1,0 +1,57 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: restaurante-mysql
+    restart: unless-stopped
+    environment:
+      # Estos valores se usan para crear la DB y el usuario
+      MYSQL_ROOT_PASSWORD: 12345 
+      MYSQL_DATABASE: db_restaurante_sena
+      MYSQL_USER: restaurante_user
+      MYSQL_PASSWORD: restaurante123
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./src/main/java/eam/edu/co/dockerConSpringBoot/scheme.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # phpMyAdmin para administrar MySQL visualmente
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: 12345
+    ports:
+      - "8081:80"
+
+  # Aplicación Spring Boot
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restaurante-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # 🚨 CAMBIO CRÍTICO: Inyectar variables para Spring Boot
+      DB_URL: jdbc:mysql://db:3306/db_restaurante_sena?serverTimezone=UTC # 'db' es el hostname dentro de la red Docker
+      DB_USERNAME: restaurante_user
+      DB_PASSWORD: restaurante123
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  db_data:
