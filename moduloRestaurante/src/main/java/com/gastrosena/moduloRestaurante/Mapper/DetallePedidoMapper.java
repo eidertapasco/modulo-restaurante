@@ -1,8 +1,8 @@
 package com.gastrosena.moduloRestaurante.Mapper;
 
-import com.gastrosena.moduloRestaurante.Entity.DetallePedido;
-import com.gastrosena.moduloRestaurante.Entity.Producto;
-import com.gastrosena.moduloRestaurante.DTO.PlatoDTO;
+import com.gastrosena.moduloRestaurante.entity.DetallePedido;
+import com.gastrosena.moduloRestaurante.entity.Producto;
+import com.gastrosena.moduloRestaurante.dto.PlatoDTO;
 import org.springframework.stereotype.Component;
 
 @Component

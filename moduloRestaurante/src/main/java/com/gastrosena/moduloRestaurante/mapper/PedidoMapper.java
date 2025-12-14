@@ -1,4 +1,4 @@
-package com.gastrosena.moduloRestaurante.mapper;
+package com.gastrosena.moduloRestaurante.Mapper;
 
 import com.gastrosena.moduloRestaurante.dto.*;
 import com.gastrosena.moduloRestaurante.entity.*;
